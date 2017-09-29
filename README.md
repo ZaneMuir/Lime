@@ -18,6 +18,6 @@
 - [ ] 支持对视频分析结果进行简单的episode算法聚类 [[jupyter notebook demo](demo/demo_video_episode.ipynb)]
 - [ ] 自动寻找噪音区间 [[jupyter notebook demo](demo/noise_checker.ipynb)]
 
-### v0.0 - 2017-09-24
+### v0.1 - 2017-09-24
 - [x] 专为检验视频分析而定制，仅分析Ch1数据 [demo: demo720.mov]
 - [x] 支持任意Mac系统运行
