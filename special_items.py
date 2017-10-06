@@ -1,7 +1,7 @@
 import os
 #========================常量设置========================
 target_data_path = os.path.join(os.path.split(__file__)[0],'data/20170906_003.txt') #NOTE: 处理的目标原始文件
-eye_data_path = os.path.splitext(target_data_path)[0]+'_eye_30min.csv'
+eye_data_path = os.path.splitext(target_data_path)[0]+'_eye_10min.csv'
 chart_dir = os.path.join(os.path.split(__file__)[0],'chart') #NOTE: 储存图标与其他数据
 #video_dir = os.path.join(os.path.split(__file__)[0],'video') #储存视频临时文件与渲染后文件
 
@@ -15,7 +15,7 @@ powered_sheet_title = [[0,'1 CH_0','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']]
 
 skip_time = 60 #seconds NOTE: 跳过前60秒的数据，避免power引起的数据的扭曲
 eyed_span = [(60,600)] #seconds NOTE: 人工分析的时间段
-noise_span = (580,640) #NOTE: 噪音区间 BUG: 目前需要人工的去设定，建议之后的实验设法固定一个时间段使得饼干不会被碰
+noise_span = (3400, 3700) #NOTE: 噪音区间 BUG: 目前需要人工的去设定，建议之后的实验设法固定一个时间段使得饼干不会被碰
 #0906000: (1500,2000)
 #0906001: (7000,8000)
 #0906003: (3400, 3700)
@@ -23,7 +23,7 @@ noise_span = (580,640) #NOTE: 噪音区间 BUG: 目前需要人工的去设定�
 #0907002: (580,640)
 
 episode_gap = 4 #seconds NOTE:
-video_episode_gap = 20 #seconds TODO: 对视频采用episode分析
+video_episode_gap = 20 #seconds NOTE: 对视频采用episode分析
 
 #stimuli between on and off threshold are valid: threshold = scale * sigma
 powered_on_threshold_scale = 10         #XXX:  BUG: 目前需要人工设定，需要更新的自动求值算法
@@ -56,7 +56,13 @@ cluster_k = 2 #NOTE: K均值聚类的分类组数
 #========================其他设置========================
 if not os.path.isdir(chart_dir):
     os.mkdir(chart_dir)
-#TODO: 为每次session提供不同的文件夹，以方便储存数据
+#REVIEW: 为每次session提供不同的文件夹，以方便储存数据
+# SessionName_N_Gap_NoiseRange
+chart_dir = os.path.join(chart_dir,'%s_%.1f_%.1f_%s'%(os.path.splitext(os.path.split(target_data_path)[-1])[0],powered_on_threshold_scale,episode_gap,'%d_%d'%noise_span if noise_span != None else 'None'))
+if not os.path.isdir(chart_dir):
+    os.mkdir(chart_dir)
+
+
 
 #if not os.path.isdir(video_dir):
 #    os.mkdir(video_dir)

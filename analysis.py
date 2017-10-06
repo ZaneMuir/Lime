@@ -17,6 +17,30 @@ def group_consecutive(a,step=1):
         modified from https://zhuanlan.zhihu.com/p/29558169'''
     return np.split(a, np.where(np.diff(a) > step)[0] + 1)
 
+def horizontal_thresh_method(time_array, power_array, on_thresh):
+    spike = np.sign(power_array-on_thresh)
+    data = pd.DataFrame(np.hstack((time_array[:,np.newaxis], power_array[:,np.newaxis], spike[:,np.newaxis])),
+                        columns=['time','power','spike'])
+    return data
+
+def eye_data_episode(eye_data_sheet, episode_gap=4):
+    ''' 对视频分析的结果进行episode归类
+        返回值：list(tuple(start,end),...)'''
+    raw_data = np.array([])
+    for index in range(eye_data_sheet.shape[0]):
+        start = eye_data_sheet.iloc[index]['start']
+        end = eye_data_sheet.iloc[index]['end']
+        if start>end:
+            start, end = end, start
+        #print(start,end)
+        raw_data = np.hstack((raw_data, np.linspace(start,end,(end-start)*1000)))
+
+    bout_time_array = group_consecutive(raw_data, step=episode_gap)
+    bout_time_pair = [(bout_time_array[index][0], bout_time_array[index][-1]) for index in range(len(bout_time_array))]
+
+    return bout_time_pair
+
+#REVIEW: shall we cancel this?
 def power_spectrum_with_fitting(data,psd_list,ch_num,title='', isPlot = False):
     #psd_list = [(90,150,'ctrl'),
     #            (195,202,'195_202'),
@@ -39,7 +63,7 @@ def power_spectrum_with_fitting(data,psd_list,ch_num,title='', isPlot = False):
         fitting_popt.append(popt)
     return fitting_popt, out_name
 
-#TODO: 优化scatter_cluster算法
+#REVIEW: shall we cancel this?
 def scatter_cluster(ch_num,data,bout_time_pair):
     popt_list, out_name = power_spectrum_with_fitting(data, bout_time_pair, ch_num, isPlot=False) #数据拟合
     bout_time_pair = [item for item in bout_time_pair if item[-1] not in out_name] #删去拟合未果的数据
