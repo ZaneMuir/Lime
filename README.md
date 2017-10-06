@@ -23,5 +23,6 @@
 - 支持任意Mac系统运行
 
 ### FUTURE
-- [ ] 恢复支持对双[多]通道的分析
+- [x] eye excel converter
+- [ ] 恢复对双[多]通道的分析
 - [ ] 自动寻找噪音区间 [[jupyter notebook demo](demo/noise_checker.ipynb)]

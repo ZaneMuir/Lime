@@ -41,7 +41,7 @@ def xlsx2csv(targetPath, csvName):
     result_array = []
     for index in range(len(start_array)):
         if note_array[index] != '':
-            print('remove point:',start_array[index],end_array[index],'with code:', int(note_array[index]))
+            print('remove point:',start_array[index],end_array[index],'with code:', note_array[index])
         else:
             result_array.append([start_array[index]/25, end_array[index]/25])
 
