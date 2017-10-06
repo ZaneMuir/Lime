@@ -8,6 +8,8 @@
 - matplotlib
 - sklearn
 - scipy
+- docopt
+- xlrd
 - seaborn [optional]
 - tqdm [optional]
 
