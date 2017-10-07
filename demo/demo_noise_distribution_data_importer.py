@@ -3,14 +3,12 @@ import numpy as np
 from tqdm import tqdm
 
 target_array = [
-    ['20170906_000','/Users/zane/Documents/MyDocuments/Plans/4-Horizon/Contagious_Behavior/bout_analysis/data/20170906_000.txt'],
     ['20170906_001','/Users/zane/Documents/MyDocuments/Plans/4-Horizon/Contagious_Behavior/bout_analysis/data/20170906_001.txt'],
     ['20170906_003','/Users/zane/Documents/MyDocuments/Plans/4-Horizon/Contagious_Behavior/bout_analysis/data/20170906_003.txt'],
     ['20170907_001','/Users/zane/Documents/MyDocuments/Plans/4-Horizon/Contagious_Behavior/bout_analysis/data/20170907_001.txt'],
     ['20170907_002','/Users/zane/Documents/MyDocuments/Plans/4-Horizon/Contagious_Behavior/bout_analysis/data/20170907_002.txt']]
 
 title_array = [
-    [[0,'1 CH_0','702 CH_0_P'],[1,'2 CH_1','701 CH_1_P']],
     [[0,'1 CH_0  ','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']],
     [[0,'1 CH_0','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']],
     [[0,'1 CH_0  ','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']],
