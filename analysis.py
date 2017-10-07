@@ -1,14 +1,15 @@
-from special_items import sampling_frequency, fitting_func,cluster_k
+from special_items import sampling_frequency, fitting_func,cluster_k, chart_dir
 import numpy as np
 import pandas as pd
 from scipy import signal, optimize
 from scipy.cluster.vq import kmeans
+import scipy.stats as stats
 import matplotlib.pyplot as plt
 try:
     from tqdm import tqdm
 except ImportError:
     tqdm = lambda x:x
-
+import os
 import warnings
 warnings.filterwarnings('ignore') # to suppress runtime warnings.
 
@@ -17,11 +18,42 @@ def group_consecutive(a,step=1):
         modified from https://zhuanlan.zhihu.com/p/29558169'''
     return np.split(a, np.where(np.diff(a) > step)[0] + 1)
 
+def countWithRange(target, countRange=None, name='power'):
+    if countRange is None:
+        target_data = target[name].values
+    else:
+        target_data = target[name].values[countRange[0]:countRange[1]]
+    utarget,uind=np.unique(target_data,return_inverse=True)
+    target_count=np.bincount(uind)
+    auc = target_count.sum()
+
+    return utarget, target_count, auc
+
 def horizontal_thresh_method(time_array, power_array, on_thresh):
     spike = np.sign(power_array-on_thresh)
     data = pd.DataFrame(np.hstack((time_array[:,np.newaxis], power_array[:,np.newaxis], spike[:,np.newaxis])),
                         columns=['time','power','spike'])
     return data
+
+def horizontal_log_thresh_method(ch_num, time_array, power_array):
+    #print('power:',power_array)
+    logData = np.log10(power_array)
+    param = stats.norm.fit(logData)
+    #print('param:',param)
+    on_thresh = 10**param[0]*1.5
+    #print('current thresh:', on_thresh)
+
+    dataSheet = horizontal_thresh_method(time_array, power_array, on_thresh)
+
+    uData, dataCount, auc = countWithRange(dataSheet)
+    plt.figure(figsize=(20,10))
+    plt.semilogx(uData, dataCount)
+    plt.plot([on_thresh, on_thresh],[0,dataCount.max()])
+    #plt.xlim(0,dataCount[-1]*0.005)
+    plt.savefig(os.path.join(chart_dir+str(ch_num),'distribution_plot.png'), bbox_inches='tight')
+    plt.close()
+
+    return dataSheet, on_thresh
 
 def eye_data_episode(eye_data_sheet, episode_gap=4):
     ''' 对视频分析的结果进行episode归类

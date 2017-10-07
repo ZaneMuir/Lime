@@ -14,6 +14,16 @@
 - tqdm [optional]
 
 # ChangeLog
+### v0.3 - processing
+- [x] eye excel converter
+- [ ] 恢复对双[多]通道的分析
+  - [x] misc process
+  - [x] image export
+  - [ ] eye data import 
+- [x] 利用log后的数据求sigma[[jupyter notebook demo](demo/demo_data_distribution.ipynb)]
+- [x] 时间切片，只选取60-1800秒
+- [ ] 分析是否需要继续使用noise span的算法
+
 ### v0.2 - 2017-10-05
 - 对各个操作进一步模块化，可以更方便的调试不同的分析算法
 - 支持对视频分析结果进行简单的episode算法聚类 [[jupyter notebook demo](demo/demo_video_episode.ipynb)]
@@ -23,6 +33,4 @@
 - 支持任意Mac系统运行
 
 ### FUTURE
-- [x] eye excel converter
-- [ ] 恢复对双[多]通道的分析
 - [ ] 自动寻找噪音区间 [[jupyter notebook demo](demo/noise_checker.ipynb)]
