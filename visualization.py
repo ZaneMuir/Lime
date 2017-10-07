@@ -1,4 +1,4 @@
-from special_items import chart_dir, eye_data_path, eyed_span, video_episode_gap
+from special_items import chart_dir, eye_data_path,  video_episode_gap, eyed_span
 from analysis import eye_data_episode
 import numpy as np
 import pandas as pd
@@ -6,17 +6,17 @@ import matplotlib.pyplot as plt
 
 import os
 
-def SATM(ch_num, codebook, scatter_result,title=None,inline=False):
-    plt.figure(figsize=(30,30))
-    plt.scatter(x=[x for _,x,_,_,_ in scatter_result ], y=[y for _,_,y,_,_ in scatter_result],s=50, c=['g' if c==1 else 'r' for _,_,_,_,c in scatter_result])
-    for _,x,y, in codebook:
-        plt.scatter(x=x,y=y,s=100,c='#808080')
-    #plt.xlim(-3,7)
-    if inline:
-        plt.show()
-    else:
-        plt.savefig(os.path.join(chart_dir+str(ch_num),'SATM_CH_%d.png'%ch_num), bbox_inches='tight')
-    plt.close('all')
+#def SATM(ch_num, codebook, scatter_result,title=None,inline=False):
+#    plt.figure(figsize=(30,30))
+#    plt.scatter(x=[x for _,x,_,_,_ in scatter_result ], y=[y for _,_,y,_,_ in scatter_result],s=50, c=['g' if c==1 else 'r' for _,_,_,_,c in scatter_result])
+#    for _,x,y, in codebook:
+#        plt.scatter(x=x,y=y,s=100,c='#808080')
+#    #plt.xlim(-3,7)
+#    if inline:
+#        plt.show()
+#    else:
+#        plt.savefig(os.path.join(chart_dir+str(ch_num),'SATM_CH_%d.png'%ch_num), bbox_inches='tight')
+#    plt.close('all')
 
 def R_raw(ch_num, data, on_thresh, bout_time_pair, scatter_result=None, isEyed=False, title=None, inline=False):
     plt.figure(figsize=(100,10))
@@ -36,7 +36,7 @@ def R_raw(ch_num, data, on_thresh, bout_time_pair, scatter_result=None, isEyed=F
     else:
         for index in range(len(bout_time_pair)): #scatter_result:list[(A, tau, mean, name, genre)]
             target_time = data[(data.time>=bout_time_pair[index][0]) & (data.time<=bout_time_pair[index][1])]['time'].values
-            plt.plot(target_time, np.zeros(target_time.shape),c='g',linewidth=50)
+            plt.plot(target_time, np.zeros(target_time.shape),c='g',linewidth=5)
 
 
     plt.xlim(data['time'].values[0], data['time'].values[-1])
@@ -47,9 +47,9 @@ def R_raw(ch_num, data, on_thresh, bout_time_pair, scatter_result=None, isEyed=F
 
 
     if isEyed: #添加人工识别的结果
-        eye = pd.read_csv(eye_data_path)
+        eye = pd.read_csv(eye_data_path%ch_num)
         for start,end in eye_data_episode(eye, episode_gap=video_episode_gap):
-            plt.plot([start,end],[-on_thresh*0.5,-on_thresh*0.5],c='#888888',linewidth=50)
+            plt.plot([start,end],[-on_thresh*0.5,-on_thresh*0.5],c='#888888',linewidth=5)
 
         for start, end in eyed_span:
             plt.xlim(start, end)
