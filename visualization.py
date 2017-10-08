@@ -8,16 +8,6 @@ import os
 
 
 #TODO: 添加注释。。。
-def distribution_plot(ch_num, dataSheet, title='distribution_plot.png'):
-    uData, dataCount, auc = countWithRange(dataSheet)
-
-    plt.figure(figsize=(20,10))
-    plt.semilogx(uData, dataCount)
-    plt.plot([on_thresh, on_thresh],[0,dataCount.max()])
-    #plt.xlim(0,dataCount[-1]*0.005)
-    plt.savefig(os.path.join(chart_dir+str(ch_num),title), bbox_inches='tight')
-    plt.close()
-
 def R_raw(ch_num, data, on_thresh, bout_time_pair, isEyed=False, title=None, inline=False):
     plt.figure(figsize=(100,10))
     plt.plot(data['time'].values, data['power'].values,'pink')

@@ -5,6 +5,16 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import os
 
+def distribution_plot(ch_num, dataSheet, on_thresh, title='distribution_plot.png'):
+    uData, dataCount, auc = countWithRange(dataSheet)
+
+    plt.figure(figsize=(20,10))
+    plt.semilogx(uData, dataCount)
+    plt.plot([on_thresh, on_thresh],[0,dataCount.max()])
+    #plt.xlim(0,dataCount[-1]*0.005)
+    plt.savefig(os.path.join(chart_dir+str(ch_num),title), bbox_inches='tight')
+    plt.close()
+
 def group_consecutive(a,step=1):
     ''' group consecutive numbers in an array
         modified from https://zhuanlan.zhihu.com/p/29558169'''
@@ -42,7 +52,7 @@ def horizontal_log_thresh_method(ch_num, time_array, power_array):
     on_thresh = 10**(loc+scale)
 
     dataSheet = horizontal_thresh_method(time_array, power_array, on_thresh)
-    distribution_plot(ch_num, dataSheet)
+    distribution_plot(ch_num, dataSheet, on_thresh)
 
     return dataSheet, on_thresh
 

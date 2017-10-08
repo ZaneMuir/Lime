@@ -13,7 +13,7 @@ import time as timer
 import os
 
 try:
-    from halso import Halo
+    from halo import Halo
 except ImportError:
     class Halo(object):
         """docstring for Halo."""
