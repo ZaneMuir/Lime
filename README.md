@@ -18,6 +18,9 @@
 ### v1.0 - processing
 - [ ] 纠正数学模型的错误
 
+### v0.3.2
+- [x] minor optimization
+
 ### v0.3 - 2017-10-08
 - [x] eye excel converter
 - [x] 恢复对双[多]通道的分析

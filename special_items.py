@@ -1,7 +1,7 @@
 import os
 #========================常量设置========================
-target_data_path = os.path.join(os.path.split(__file__)[0],'data','20171008_005.txt')   #待处理的spike导出txt文件地址
-eye_data_path = os.path.splitext(target_data_path)[0]+'_%d_eye_10min.csv'               #人工分析后的结果文件
+target_data_path = os.path.join(os.path.split(__file__)[0],'data','20171123001_PW.txt')   #待处理的spike导出txt文件地址
+eye_data_path = os.path.splitext(target_data_path)[0]+'_%d_eye_30min.csv'               #人工分析后的结果文件
 chart_dir = os.path.join(os.path.split(__file__)[0],'chart')                            #储存结果的目录
 
 powered_sheet_title = [[0,'1 CH_0','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']]
@@ -12,8 +12,8 @@ powered_sheet_title = [[0,'1 CH_0','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']]
 #FUTURE:                    [[0,'1 CH_0','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']]
 # power后的txt文件的columns names
 
-taking_time = (60,1800) #seconds NOTE:跳过前60秒的数据，避免power引起的数据的扭曲; 跳过1800秒后的数据，方便统计数据。
-eyed_span = [(60,800)]  #seconds NOTE: 人工分析的时间段
+taking_time = (60,3600) #seconds NOTE:跳过前60秒的数据，避免power引起的数据的扭曲; 跳过1800秒后的数据，方便统计数据。
+eyed_span = [(60,3600)]  #seconds NOTE: 人工分析的时间段
 
 episode_gap = 4         #seconds NOTE: episode聚类间隔时长
 video_episode_gap = 4   #seconds NOTE: 对视频采用episode分析

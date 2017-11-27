@@ -8,10 +8,18 @@ import os
 def distribution_plot(ch_num, dataSheet, on_thresh, title='distribution_plot.png'):
     uData, dataCount, auc = countWithRange(dataSheet)
 
-    plt.figure(figsize=(20,10))
-    plt.semilogx(uData, dataCount)
-    plt.plot([on_thresh, on_thresh],[0,dataCount.max()])
+    #plt.figure(figsize=(20,10))
+    #plt.semilogx(uData, dataCount)
+    #plt.plot([on_thresh, on_thresh],[0,dataCount.max()])
     #plt.xlim(0,dataCount[-1]*0.005)
+    #plt.savefig(os.path.join(chart_dir+str(ch_num),title), bbox_inches='tight')
+    #plt.close()
+
+    plt.figure(figsize=(20,10))
+    ax = plt.subplot(111)
+    ax.hist(dataSheet['power'].values,bins=np.linspace(0,1e-3,500))
+    ax.plot([on_thresh, on_thresh],[0,dataCount.max()])
+    #ax.set_xscale('log')
     plt.savefig(os.path.join(chart_dir+str(ch_num),title), bbox_inches='tight')
     plt.close()
 
@@ -50,6 +58,14 @@ def horizontal_log_thresh_method(ch_num, time_array, power_array):
     logData = np.log10(power_array)
     loc, scale = stats.norm.fit(logData)
     on_thresh = 10**(loc+scale)
+
+    print(loc, scale)
+
+    if power_array.max() < 0.0005:
+        on_thresh = 0.0005
+        print("power_array.max is:", power_array.max())
+    else:
+        on_thresh = on_thresh #if power_array.max() < 0.0005 else 0.0005
 
     dataSheet = horizontal_thresh_method(time_array, power_array, on_thresh)
     distribution_plot(ch_num, dataSheet, on_thresh)

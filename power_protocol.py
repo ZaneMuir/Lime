@@ -24,7 +24,7 @@ except ImportError:
         info = warn = succeed = lambda x,text:print(text)
 
 
-def main(isPreview=False):
+def main(isPreview=False, needEye=True):
     print('start')
     start_point = timer.time()
     for ch_num, time_array, raw_array, power_array, _ in process_powered_sheet():
@@ -40,26 +40,30 @@ def main(isPreview=False):
         spinner.start()
 
         #NOTE: preview
-        rawChartAllRange(ch_num, data, on_thresh) # all range preview
+        #rawChartAllRange(ch_num, data, on_thresh) # all range preview
         #rawChartAllRange(ch_num, data, on_thresh, preview_range=(#,#)) # preview specific range
         if isPreview:
             continue # 若为预览模式则在此步退出
 
         #NOTE: 获取data rise 的点: 即将连续的时间点分类归组 ==> bout_time_pair: list[(start, end, name)]
-        bout_time_array = group_consecutive(data[data.spike > 0]['time'].values, step=episode_gap)
-        bout_time_pair = [(bout_time_array[index][0], bout_time_array[index][-1], 'bout_%d'%index) for index in range(len(bout_time_array))]
+        try:
+            bout_time_array = group_consecutive(data[data.spike > 0]['time'].values, step=episode_gap)
+            bout_time_pair = [(bout_time_array[index][0], bout_time_array[index][-1], 'bout_%d'%index) for index in range(len(bout_time_array))]
+        except IndexError:
+            spinner.warn('with no chewing!!!')
+            continue
 
         exportCSV(ch_num, bout_time_pair)
 
         try:
-            R_raw(ch_num, data, on_thresh, bout_time_pair, isEyed=True)
+            R_raw(ch_num, data, on_thresh, bout_time_pair, isEyed=needEye)
         except FileNotFoundError:
-            spinner.warn(text='CH_%d has no eye data'%ch_num)
+            spinner.warn(text='CH_%d has no eye data: %s'%(ch_num,eye_data_path%ch_num))
             spinner.start()
 
         spinner.succeed(text='CH_%d processed'%ch_num)
 
-    print('all done!','%.2f'%((timer.time()-start_point)/60))
+    print('all done!','%.2f'%((timer.time()-start_point)))
 
 if __name__ == '__main__':
     main()
