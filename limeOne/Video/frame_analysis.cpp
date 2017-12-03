@@ -12,7 +12,7 @@ String checkMousePos(Rect shape){
 
 cv::Mat frameAnalysis(cv::Mat* frame, ofstream* outputFile, char suffix){
   Mat gray, mask, morph, demo, target;
-  Rect shape;
+  Rect shape=Rect(-1,-1,0,0);
   vector<vector<Point> > contours;
   vector<Vec4i> hierarchy;
 
