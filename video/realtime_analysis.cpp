@@ -1,8 +1,10 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <fstream>
 #include <string>
 
 #include "realtime.h"
+#include "progress_bar.hpp"
 
 using namespace cv;
 
@@ -68,16 +70,22 @@ void roi_selector(cv::Mat* img){
 
 int main(int argc, char const *argv[]) {
   VideoCapture webcam; // create camera object.
+  String outputName;
   bool isOnline;
-  if (argc != 1){
+  if (argc == 3){
     // off-line mode
     String videoName = argv[1];
+    outputName = argv[2];
     webcam = VideoCapture(videoName);
     isOnline = false;
-  } else {
+  } else if (argc == 2) {
     //on-line mode
     webcam = VideoCapture(0);
+    outputName = argv[1];
     isOnline = true;
+  } else {
+    std::cout << "usage videoAnalysis [videoPath] <outputPath>"<<std::endl;
+    return 1;
   }
 
   std::cout << "fps: " << webcam.get(CAP_PROP_FPS) << std::endl; // print fps info.
@@ -109,26 +117,53 @@ int main(int argc, char const *argv[]) {
   ROIRight.width = ROILeft.width;
   ROIRight.height = ROILeft.height;
 
-  namedWindow("analysis", WINDOW_OPENGL);
+
   //TODO: create video writer
   // realtime analysis block
+
+//  if (!isOnline){
+//    destroyAllWindows();
+//    namedWindow("analysis", WINDOW_OPENGL);
+//  }
+
+  ofstream outputFile;
+  outputFile.open(outputName);
+  outputFile << "time,leftX,leftY,leftW,leftH,leftLabel,rightX,rightY,rightW,rightH,rightLabel\n";
+  float currentPos;
+
+  std::cout << "start analysis" << std::endl;
+
+  int nframe = int(webcam.get(cv::CAP_PROP_FRAME_COUNT));
+  ProgressBar* pBar = new ProgressBar(nframe, "video");
+  int framePos;
+
   while(webcam.isOpened()){
     webcam >> frame; // nect frame.
+    currentPos = webcam.get(cv::CAP_PROP_POS_MSEC) / 1000;
+    outputFile << to_string(currentPos) << ",";
 
     Mat leftFrame = frame(ROILeft);
     Mat rightFrame = frame(ROIRight);
-    hconcat(leftFrame,rightFrame,preview);
-    resize(preview, preview, Size(preview.cols / frameScale, preview.rows / frameScale));
-    imshow("webcam_raw",preview);
 
-    result_left = frameAnalysis(&leftFrame);
-    result_right = frameAnalysis(&rightFrame);
-    hconcat(result_left,result_right,preview);
-    resize(preview, preview, Size(preview.cols / frameScale, preview.rows / frameScale));
-    imshow("analysis",preview);
+    if (isOnline){
+      hconcat(leftFrame,rightFrame,preview);
+      resize(preview, preview, Size(preview.cols / frameScale, preview.rows / frameScale));
+      imshow("webcam_raw",preview);
+    }
 
+    result_left = frameAnalysis(&leftFrame, &outputFile, ',');
+    result_right = frameAnalysis(&rightFrame, &outputFile, '\n');
+    if (isOnline){
+      hconcat(result_left,result_right,preview);
+      resize(preview, preview, Size(preview.cols / frameScale, preview.rows / frameScale));
+      imshow("analysis",preview);
+    }
+
+    framePos = int(webcam.get(cv::CAP_PROP_POS_FRAMES));
+    pBar->Progressed(framePos);
     if((char)waitKey(1) == 27) break;
   }
+  outputFile.close();
   return 0;
 }
 

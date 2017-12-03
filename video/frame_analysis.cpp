@@ -1,13 +1,18 @@
 #include <opencv2/opencv.hpp>
+#include <fstream>
+#include <string>
 #include "realtime.h"
 
 using namespace cv;
 
+String checkMousePos(Rect shape){
+  //TODO:
+  return "";
+}
 
-
-cv::Mat frameAnalysis(cv::Mat* frame){
+cv::Mat frameAnalysis(cv::Mat* frame, ofstream* outputFile, char suffix){
   Mat gray, mask, morph, demo, target;
-  Rect shape;
+  Rect shape=Rect(-1,-1,0,0);
   vector<vector<Point> > contours;
   vector<Vec4i> hierarchy;
 
@@ -26,6 +31,9 @@ cv::Mat frameAnalysis(cv::Mat* frame){
       rectangle(target,shape,Scalar(250),2);
     }
   }
+  String posLabel = checkMousePos(shape);
+  *outputFile << to_string(shape.x) << "," << to_string(shape.y) << "," << to_string(shape.width) << "," << to_string(shape.height) << ","
+              <<posLabel<< suffix;
 
   return target;
 }

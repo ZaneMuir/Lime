@@ -11,8 +11,5 @@ include_directories( "${PROJECT_BINARY_DIR}" )
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-add_executable( demo realtime_demo.cpp )
-target_link_libraries( demo ${OpenCV_LIBS})
-
-add_executable( videoAnalysis realtime_analysis.cpp frame_analysis.cpp)
+add_executable( videoAnalysis realtime_analysis.cpp frame_analysis.cpp progress_bar.cpp)
 target_link_libraries( videoAnalysis ${OpenCV_LIBS} )
