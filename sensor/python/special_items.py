@@ -1,7 +1,7 @@
 import os
 #========================常量设置========================
-target_data_path = os.path.join(os.path.split(__file__)[0],'data','20171123001_PW.txt')   #待处理的spike导出txt文件地址
-eye_data_path = os.path.splitext(target_data_path)[0]+'_%d_eye_30min.csv'               #人工分析后的结果文件
+target_data_path = os.path.join(os.path.split(__file__)[0],'data','20171122000_PW.txt')   #待处理的spike导出txt文件地址
+eye_data_path = os.path.splitext(target_data_path)[0]+'_%d_eye_60min.csv'               #人工分析后的结果文件
 chart_dir = os.path.join(os.path.split(__file__)[0],'chart')                            #储存结果的目录
 
 powered_sheet_title = [[0,'1 CH_0','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']]

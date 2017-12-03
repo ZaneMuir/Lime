@@ -59,7 +59,7 @@ def horizontal_log_thresh_method(ch_num, time_array, power_array):
     loc, scale = stats.norm.fit(logData)
     on_thresh = 10**(loc+scale)
 
-    print(loc, scale)
+    #print(loc, scale)
 
     if power_array.max() < 0.0005:
         on_thresh = 0.0005

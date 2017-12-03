@@ -2,8 +2,6 @@
 调整 ```special_items.py``` 文档中的各项参数；运行 ```power_protocol.py``` 文件。
 完成后数据与图片将保存于```chart/{SessionName}_{Gap}_{Ch_Num}```文件夹内。
 
-主要对sensor记录到的信号做线下处理。
-
 # Requirements:
 - numpy
 - pandas
@@ -19,9 +17,7 @@
 # ChangeLog
 ### v1.0 - processing
 - [ ] 纠正数学模型的错误
-
-### v0.3.2
-- [x] minor optimization
+  - [ ] 尝试用柏松分布拟合
 
 ### v0.3 - 2017-10-08
 - [x] eye excel converter
