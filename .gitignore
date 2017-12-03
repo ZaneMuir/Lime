@@ -1,5 +1,8 @@
 .DS_Store
 
+# cmake file
+build/
+
 # Analysis Results
 chart/
 data

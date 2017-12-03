@@ -1,0 +1,8 @@
+docopt
+matplotlib
+numpy
+scipy
+pandas
+opencv-python
+Cython
+halo
