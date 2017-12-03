@@ -30,13 +30,11 @@ if arguments['VIDEOFILE']:
     #videoAnalysis
     os.system('Video/videoAnalysis %s %s'%( os.path.join(arguments['--input'], arguments['VIDEOFILE']),
                                             os.path.join(arguments['--input'], '%spose.csv'%os.path.splitext(arguments['VIDEOFILE'])[0])))
-else:
-    arguments['VIDEOFILE'] = re.split('_',os.path.splitext(arguments['SENSORFILE'])[0])[0]+'.mov'
-#pose analysis
-#TODO
-poseCheck(  os.path.join(arguments['--input'], '%spose.csv'%os.path.splitext(arguments['VIDEOFILE'])[0]),
-            arguments['eyeDataFile'],
-            float(arguments['--videoOffset']))
+    #pose analysis
+    poseCheck(  os.path.join(arguments['--input'], '%spose.csv'%os.path.splitext(arguments['VIDEOFILE'])[0]),
+                arguments['eyeDataFile'],
+                float(arguments['--videoOffset']))
+
 #sensor analysis
 finalmain(arguments)
 print('all done! %.2f'%(time.time()-startPoint))
