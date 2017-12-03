@@ -9,7 +9,6 @@ from .analysis import horizontal_log_thresh_method as current_analysis_method
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import time as timer
 import os
 
 try:
@@ -26,7 +25,6 @@ except ImportError:
 
 def main(arguments, isPreview=False, needEye=True):
     print('start')
-    start_point = timer.time()
 
     for ch_num, time_array, raw_array, power_array, _ in process_powered_sheet(arguments):
         #if ch_num == 0:
@@ -60,8 +58,3 @@ def main(arguments, isPreview=False, needEye=True):
             spinner.start()
 
         spinner.succeed(text='CH_%d processed'%ch_num)
-
-    print('all done!','%.2f'%((timer.time()-start_point)))
-
-if __name__ == '__main__':
-    main()

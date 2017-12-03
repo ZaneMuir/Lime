@@ -85,6 +85,8 @@ def eye_data_episode(eye_data_sheet, episode_gap=4):
         raw_data = np.hstack((raw_data, np.linspace(start,end,(end-start)*1000)))
 
     bout_time_array = group_consecutive(raw_data, step=episode_gap)
-    bout_time_pair = [(bout_time_array[index][0], bout_time_array[index][-1]) for index in range(len(bout_time_array))]
-
+    try:
+        bout_time_pair = [(bout_time_array[index][0], bout_time_array[index][-1]) for index in range(len(bout_time_array))]
+    except IndexError:
+        bout_time_pair = [(0,0)]
     return bout_time_pair
