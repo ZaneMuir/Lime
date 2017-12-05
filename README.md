@@ -17,3 +17,5 @@ Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 --timeRange=RANGE           checking range, unit as second [default: 60_3600]
 --videoOffset=OFFSET        video offset, aligning with sensor time, counts as second [default: 0.0]
 ```
+
+![demo](demo/screenshot.png)

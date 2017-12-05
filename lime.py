@@ -1,6 +1,8 @@
-from Sensor.power_protocol import main as finalmain
+from Sensor.power_protocol import main as sensorMain
 from Sensor.special_items import checkFile
-from Sensor.poseAnalysis import poseCheck
+from Sensor.poseAnalysis import poseCheck_line as poseCheck
+from Sensor.video import main as videoMain
+from Sensor.videoOverSensor import main as finalMain
 import os,time, re
 startPoint = time.time()
 __doc__ = """Lime
@@ -14,6 +16,7 @@ Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 --eyeDataSuffix=EYESUFFIX   eye data file suffix [default: _%d_eye_60min.csv]
 --timeRange=RANGE           checking range, unit as second [default: 60_3600]
 --videoOffset=OFFSET        video offset, aligning with sensor time, counts as second [default: 0.0]
+--poseAnalysis=POSEANA      need pose analysis only? [default: True]
 """
 from docopt import docopt
 arguments = docopt(__doc__, version='Lime 2.0.0')
@@ -28,13 +31,34 @@ print(arguments)
 
 if arguments['VIDEOFILE']:
     #videoAnalysis
-    os.system('Video/videoAnalysis %s %s'%( os.path.join(arguments['--input'], arguments['VIDEOFILE']),
-                                            os.path.join(arguments['--input'], '%spose.csv'%os.path.splitext(arguments['VIDEOFILE'])[0])))
+    videoMain(  os.path.join(arguments['--input'], arguments['VIDEOFILE']),
+                os.path.join(arguments['--input'], '%s_pose.csv'%os.path.splitext(arguments['SENSORFILE'])[0]))
+
+    #os.system('Video/videoAnalysis %s %s'%( os.path.join(arguments['--input'], arguments['VIDEOFILE']),
+    #                                        os.path.join(arguments['--input'], '%spose.csv'%os.path.splitext(arguments['VIDEOFILE'])[0])))
     #pose analysis
-    poseCheck(  os.path.join(arguments['--input'], '%spose.csv'%os.path.splitext(arguments['VIDEOFILE'])[0]),
+    arguments['--poseAnalysis'] == 'True'
+
+if arguments['--poseAnalysis'] == 'True':
+    poseCheck(  os.path.join(arguments['--input'], '%s_pose.csv'%os.path.splitext(arguments['SENSORFILE'])[0]),
                 arguments['eyeDataFile'],
                 float(arguments['--videoOffset']))
+else:
+    print('skip')
 
 #sensor analysis
-finalmain(arguments)
+sensorMain(arguments)
+
+ChewFilePath = os.path.join(arguments['--output']+'%d','bout_time_CH_%d.csv')
+
+duration, count = finalMain(  ChewFilePath=ChewFilePath%(0,0),
+            EyeFilePath=arguments['eyeDataFile']%0,
+            outputName=arguments['--output']+'0')
+
+print("Channel 0 [left mouse]: \nchewing count: %d\nchewing duration: %.2f"%(count,duration))
+
+duration, count = finalMain(  ChewFilePath=ChewFilePath%(1,1),
+            EyeFilePath=arguments['eyeDataFile']%1,
+            outputName=arguments['--output']+'1')
+print("Channel 1 [right mouse]: \nchewing count: %d\nchewing duration: %.2f"%(count,duration))
 print('all done! %.2f'%(time.time()-startPoint))
