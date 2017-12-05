@@ -5,7 +5,8 @@ from Sensor.video import main as videoMain
 from Sensor.videoOverSensor import main as finalMain
 import os,time, re
 startPoint = time.time()
-__doc__ = """Lime
+__doc__ = """
+Lime 2.1.0
 analysis program for chewing behavior of Zhang's Lab.
 
 Usage: lime.py [options] SENSORFILE [VIDEOFILE]
@@ -19,7 +20,7 @@ Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 --poseAnalysis=POSEANA      need pose analysis only? [default: True]
 """
 from docopt import docopt
-arguments = docopt(__doc__, version='Lime 2.0.0')
+arguments = docopt(__doc__, version='Lime 2.1.0')
 #print(arguments)
 
 arguments['--output'], arguments['eyeDataFile'] = checkFile(arguments['--output'],
