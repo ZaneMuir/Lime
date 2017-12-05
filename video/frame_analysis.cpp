@@ -37,3 +37,20 @@ cv::Mat frameAnalysis(cv::Mat* frame, ofstream* outputFile, char suffix){
 
   return target;
 }
+
+double frameAnalysis_line(cv::Mat* frame, ofstream* outputFile, char suffix){
+
+  long sum=0;
+  double result;
+  for(int i = 0; i < frame->rows; i++)
+  {
+      //const double* Mi = frame->ptr<double>(i);
+      for(int j = 0; j < frame->cols; j++)
+          sum += frame->at<frame->type()>(i,j);
+  }
+  result = sum / (frame->rows * frame->cols);
+  *outputFile << to_string(sum) << "," << frame->cols << "," << frame->rows
+              << suffix;
+
+  return sum;
+}
