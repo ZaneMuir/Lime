@@ -6,3 +6,4 @@ pandas
 opencv-python
 Cython
 halo
+tqdm
