@@ -15,12 +15,15 @@ analysis program for chewing behavior of Zhang's Lab.
 
 Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 
---episode=GAP               episode gap length, unit as second [default: 4]
---input=INDIR               data directory [default: data]
---output=OUTDIR             chart directory [default: chart]
---eyeDataSuffix=EYESUFFIX   eye data file suffix [default: _%d_eye_60min.csv]
---timeRange=RANGE           checking range, unit as second [default: 60_3600]
---videoOffset=OFFSET        video offset, aligning with sensor time, counts as second [default: 0.0]
+-i INDIR --input=INDIR                  # data directory [default: data]
+-o OUTDIR --output=OUTDIR               # chart directory [default: chart]
+-v OFFSET --videoOffset=OFFSET          # video offset, aligning with sensor time, counts as second [default: 0.0]
+-e GAP --episode=GAP                    # episode gap length, unit as second [default: 4]
+-c GAP --climbEpisode=GAP               # climbing episode gap length, unit as second [default: 0]
+-t RANGE --timeRange=RANGE              # checking range, unit as second [default: 60_3600]
+-d, --debug                             # debug mode
+-p POSEANA --poseAnalysis=POSEANA       # need pose analysis only? [default: True]
+-s EYESUFFIX --eyeDataSuffix=EYESUFFIX  # eye data file suffix [default: _%d_eye_60min.csv]
 ```
 
 ## Demo 示例

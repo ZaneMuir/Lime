@@ -6,24 +6,25 @@ from Sensor.videoOverSensor import main as finalMain
 from Sensor.climbInfo import main as climbInfo
 import os,time, re
 startPoint = time.time()
+__version__ = "1.1.2"
 __doc__ = """
-Lime 1.1.1
+Lime {version}
 analysis program for chewing behavior of Zhang's Lab.
 
 Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 
---episode=GAP               episode gap length, unit as second [default: 4]
---climbEpisode=gap          climbing episode gap length, unit as second [default: 0]
---input=INDIR               data directory [default: data]
---output=OUTDIR             chart directory [default: chart]
---eyeDataSuffix=EYESUFFIX   eye data file suffix [default: _%d_eye_60min.csv]
---timeRange=RANGE           checking range, unit as second [default: 60_3600]
---videoOffset=OFFSET        video offset, aligning with sensor time, counts as second [default: 0.0]
---poseAnalysis=POSEANA      need pose analysis only? [default: True]
---silent                    silent mode
-"""
+-i INDIR --input=INDIR                  # data directory [default: data]
+-o OUTDIR --output=OUTDIR               # chart directory [default: chart]
+-v OFFSET --videoOffset=OFFSET          # video offset, aligning with sensor time, counts as second [default: 0.0]
+-e GAP --episode=GAP                    # episode gap length, unit as second [default: 4]
+-c GAP --climbEpisode=GAP               # climbing episode gap length, unit as second [default: 0]
+-t RANGE --timeRange=RANGE              # checking range, unit as second [default: 60_3600]
+-d, --debug                             # debug mode
+-p POSEANA --poseAnalysis=POSEANA       # need pose analysis only? [default: True]
+-s EYESUFFIX --eyeDataSuffix=EYESUFFIX  # eye data file suffix [default: _%d_eye_60min.csv]
+""".format(version=__version__)
 from docopt import docopt
-arguments = docopt(__doc__, version='Lime 1.1.1')
+arguments = docopt(__doc__, version='Lime %s'%__version__)
 #print(arguments)
 
 arguments['--output'], arguments['eyeDataFile'] = checkFile(arguments['--output'],
@@ -31,7 +32,8 @@ arguments['--output'], arguments['eyeDataFile'] = checkFile(arguments['--output'
                                                             int(arguments['--episode']),
                                                             arguments['--eyeDataSuffix'])
 
-#print(arguments)
+if arguments['--debug']:
+    print(arguments)
 
 if arguments['VIDEOFILE']:
     #videoAnalysis
