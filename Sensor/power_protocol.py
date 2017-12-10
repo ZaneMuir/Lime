@@ -25,7 +25,6 @@ except ImportError:
 
 
 def main(arguments, isPreview=False, needEye=True):
-    print('start')
 
     for ch_num, time_array, raw_array, power_array, _ in process_powered_sheet(arguments):
         #if ch_num == 0:
