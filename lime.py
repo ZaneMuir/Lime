@@ -7,7 +7,7 @@ from Sensor.climbInfo import main as climbInfo
 import os,time, re
 startPoint = time.time()
 __doc__ = """
-Lime 2.1.0
+Lime 1.1.1
 analysis program for chewing behavior of Zhang's Lab.
 
 Usage: lime.py [options] SENSORFILE [VIDEOFILE]
@@ -23,7 +23,7 @@ Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 --silent                    silent mode
 """
 from docopt import docopt
-arguments = docopt(__doc__, version='Lime 2.1.0')
+arguments = docopt(__doc__, version='Lime 1.1.1')
 #print(arguments)
 
 arguments['--output'], arguments['eyeDataFile'] = checkFile(arguments['--output'],
