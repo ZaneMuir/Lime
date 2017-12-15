@@ -21,6 +21,7 @@ Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 -e GAP --episode=GAP                    # episode gap length, unit as second [default: 4]
 -c GAP --climbEpisode=GAP               # climbing episode gap length, unit as second [default: 0]
 -t RANGE --timeRange=RANGE              # checking range, unit as second [default: 60_3600]
+-w WIDTH --width=WIDTH                  # target area width, unit as px [default: 200]
 -d, --debug                             # debug mode
 -p POSEANA --poseAnalysis=POSEANA       # need pose analysis only? [default: True]
 -s EYESUFFIX --eyeDataSuffix=EYESUFFIX  # eye data file suffix [default: _%d_eye_60min.csv]
