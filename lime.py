@@ -6,7 +6,7 @@ from Sensor.videoOverSensor import main as finalMain
 from Sensor.climbInfo import main as climbInfo
 import os,time, re
 startPoint = time.time()
-__version__ = "1.1.2"
+__version__ = "1.1.3"
 __doc__ = """
 Lime {version}
 analysis program for chewing behavior of Zhang's Lab.
@@ -19,6 +19,7 @@ Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 -e GAP --episode=GAP                    # episode gap length, unit as second [default: 4]
 -c GAP --climbEpisode=GAP               # climbing episode gap length, unit as second [default: 0]
 -t RANGE --timeRange=RANGE              # checking range, unit as second [default: 60_3600]
+-w WIDTH --width=WIDTH                  # target area width, unit as px [default: 200]
 -d, --debug                             # debug mode
 -p POSEANA --poseAnalysis=POSEANA       # need pose analysis only? [default: True]
 -s EYESUFFIX --eyeDataSuffix=EYESUFFIX  # eye data file suffix [default: _%d_eye_60min.csv]
@@ -38,7 +39,8 @@ if arguments['--debug']:
 if arguments['VIDEOFILE']:
     #videoAnalysis
     videoMain(  os.path.join(arguments['--input'], arguments['VIDEOFILE']),
-                os.path.join(arguments['--input'], '%s_pose.csv'%os.path.splitext(arguments['SENSORFILE'])[0]))
+                os.path.join(arguments['--input'], '%s_pose.csv'%os.path.splitext(arguments['SENSORFILE'])[0]),
+                width=int(arguments['WIDTH']))
 
     #os.system('Video/videoAnalysis %s %s'%( os.path.join(arguments['--input'], arguments['VIDEOFILE']),
     #                                        os.path.join(arguments['--input'], '%spose.csv'%os.path.splitext(arguments['VIDEOFILE'])[0])))
