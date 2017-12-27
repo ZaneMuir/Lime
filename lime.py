@@ -1,12 +1,15 @@
-from Sensor.power_protocol import main as sensorMain
-from Sensor.special_items import checkFile
-from Sensor.poseAnalysis import poseCheck_line as poseCheck
-from Sensor.video import main as videoMain
-from Sensor.videoOverSensor import main as finalMain
-from Sensor.climbInfo import main as climbInfo
+from LimeOne.power_protocol import main as sensorMain
+from LimeOne.special_items import checkFile
+from LimeOne.poseAnalysis import poseCheck_line as poseCheck
+from LimeOne.video import main as videoMain
+from LimeOne.videoOverSensor import main as finalMain
+from LimeOne.climbInfo import main as climbInfo
 import os,time, re
+
+import sqlite3 as sq # using SQLite3 for data storage
+
 startPoint = time.time()
-__version__ = "1.1.3"
+__version__ = "1.2.1"
 __doc__ = """
 Lime {version}
 analysis program for chewing behavior of Zhang's Lab.
@@ -23,7 +26,9 @@ Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 -d, --debug                             # debug mode
 -p POSEANA --poseAnalysis=POSEANA       # need pose analysis only? [default: True]
 -s EYESUFFIX --eyeDataSuffix=EYESUFFIX  # eye data file suffix [default: _%d_eye_60min.csv]
+-b DBNAME --database=DBNAME             # database filename [default: chew_behavior.db]
 """.format(version=__version__)
+
 from docopt import docopt
 arguments = docopt(__doc__, version='Lime %s'%__version__)
 #print(arguments)
