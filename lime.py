@@ -1,9 +1,4 @@
-from Sensor.power_protocol import main as sensorMain
-from Sensor.special_items import checkFile
-from Sensor.poseAnalysis import poseCheck_line as poseCheck
-from Sensor.video import main as videoMain
-from Sensor.videoOverSensor import main as finalMain
-from Sensor.climbInfo import main as climbInfo
+import LimeOne
 import os,time, re
 startPoint = time.time()
 __version__ = "1.1.3"
@@ -28,7 +23,7 @@ from docopt import docopt
 arguments = docopt(__doc__, version='Lime %s'%__version__)
 #print(arguments)
 
-arguments['--output'], arguments['eyeDataFile'] = checkFile(arguments['--output'],
+arguments['--output'], arguments['eyeDataFile'] = LimeOne.checkFile(arguments['--output'],
                                                             os.path.join(arguments['--input'],arguments['SENSORFILE']),
                                                             int(arguments['--episode']),
                                                             arguments['--eyeDataSuffix'])
@@ -38,9 +33,9 @@ if arguments['--debug']:
 
 if arguments['VIDEOFILE']:
     #videoAnalysis
-    videoMain(  os.path.join(arguments['--input'], arguments['VIDEOFILE']),
+    LimeOne.videoMain(  os.path.join(arguments['--input'], arguments['VIDEOFILE']),
                 os.path.join(arguments['--input'], '%s_pose.csv'%os.path.splitext(arguments['SENSORFILE'])[0]),
-                width=int(arguments['WIDTH']))
+                width=int(arguments['--width']))
 
     #os.system('Video/videoAnalysis %s %s'%( os.path.join(arguments['--input'], arguments['VIDEOFILE']),
     #                                        os.path.join(arguments['--input'], '%spose.csv'%os.path.splitext(arguments['VIDEOFILE'])[0])))
@@ -49,29 +44,29 @@ if arguments['VIDEOFILE']:
 
 if arguments['--poseAnalysis'] == 'True':
     print("pose analysis")
-    poseCheck(  os.path.join(arguments['--input'], '%s_pose.csv'%os.path.splitext(arguments['SENSORFILE'])[0]),
+    LimeOne.poseCheck(  os.path.join(arguments['--input'], '%s_pose.csv'%os.path.splitext(arguments['SENSORFILE'])[0]),
                 arguments['eyeDataFile'],
                 float(arguments['--videoOffset']))
 else:
     print('skip')
 
 #sensor analysis
-sensorMain(arguments)
+LimeOne.sensorMain(arguments)
 
 ChewFilePath = os.path.join(arguments['--output']+'%d','bout_time_CH_%d.csv')
 
 print("-"*12,"result","-"*12)
-duration, count = finalMain(  ChewFilePath=ChewFilePath%(0,0),
+duration, count = LimeOne.finalMain(  ChewFilePath=ChewFilePath%(0,0),
             EyeFilePath=arguments['eyeDataFile']%0,
             outputName=arguments['--output']+'0')
-climb_count, climb_duration, _ = climbInfo(arguments['eyeDataFile']%0, int(arguments['--climbEpisode']))
+climb_count, climb_duration, _ = LimeOne.climbInfo(arguments['eyeDataFile']%0, int(arguments['--climbEpisode']))
 print("Channel 0 [left mouse]: \nchewing count: %d\nchewing duration: %.2f"%(count,duration))
 print("climbing count: %d\nclimbing duration: %.2f\n"%(climb_count,climb_duration))
 
-duration, count = finalMain(  ChewFilePath=ChewFilePath%(1,1),
+duration, count = LimeOne.finalMain(  ChewFilePath=ChewFilePath%(1,1),
             EyeFilePath=arguments['eyeDataFile']%1,
             outputName=arguments['--output']+'1')
-climb_count, climb_duration, _ = climbInfo(arguments['eyeDataFile']%1, int(arguments['--climbEpisode']))
+climb_count, climb_duration, _ = LimeOne.climbInfo(arguments['eyeDataFile']%1, int(arguments['--climbEpisode']))
 print("Channel 1 [right mouse]: \nchewing count: %d\nchewing duration: %.2f"%(count,duration))
 print("climbing count: %d\nclimbing duration: %.2f"%(climb_count,climb_duration))
 print("-"*32)
