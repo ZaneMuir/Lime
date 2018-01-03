@@ -9,12 +9,15 @@ analysis program for chewing behavior of Zhang's Lab.
 
 体重信息的录入，请使用``` limeWight.py ```文件。
 
+**NOTE**: 如果重复运算同一个session，可能会出现```sqlite3.IntegrityError: UNIQUE constraint failed: summary.SessionID```的报错，下次再改吧[苦笑脸]。解决方法: 在sqlite3里手工把那个条目删除再运行。
+
 ```
 Lime
 analysis program for chewing behavior of Zhang's Lab.
 
 Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 
+Options:
 -c GAP --climbEpisode=GAP               # climbing episode gap length, unit as second [default: 0]
 --debug                                 # debug mode
 -d DATE --date=DATE                     # session date [default: YYYYMMDD]
@@ -32,6 +35,19 @@ Usage: lime.py [options] SENSORFILE [VIDEOFILE]
 -v OFFSET --videoOffset=OFFSET          # video offset, aligning with sensor time, counts as second [default: 0.0]
 -w WIDTH --width=WIDTH                  # target area width, unit as px [default: 20]
 """.format(version=__version__)
+```
+
+```
+LimeWeight {version}
+
+Usage: LimeWeight.py -c CAGENUM -d DATE [options] (WEIGHTSEQ ...)
+
+Options:
+--debug         # debug mode
+-c CAGENUM      # cage number
+-n NMICE        # total mice sum [default: 8]
+-i INPUTDIR     # input data directory [default: data]
+-f DATABASE     # database file [default: chewing.db]
 ```
 
 ## Demo 示例
