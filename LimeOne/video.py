@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from tqdm import tqdm
+from .database import createNewPoseTable
 
 drawing = 0
 box = []
@@ -23,69 +24,61 @@ def mouse_paint_callback(event, x, y, flag, param):
                 (0x00,0xff,0x00),2)
         cv2.imshow("webcam_raw",preview)
 
-
-def main(camName, outputFileName,width=200):
-    global box,preview
+def main(camName, dbCursor, session_name, ncage=2, width=20):
+    global box, preview
     webcam = cv2.VideoCapture(camName)
+
     cv2.namedWindow("webcam_raw")
-    #cv2.namedWindow("demo")
 
-
+    # print meta info
     print("fps: %.2f"%webcam.get(cv2.CAP_PROP_FPS))
     print("resolution: %.0f*%.0f"%( webcam.get(cv2.CAP_PROP_FRAME_WIDTH),
                                     webcam.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     print("length: %.2f seconds"%(webcam.get(cv2.CAP_PROP_FRAME_COUNT)/webcam.get(cv2.CAP_PROP_FPS)))
 
+    # scale frame to a better size, ie. 720p
     frameScale = 1
     if webcam.get(cv2.CAP_PROP_FRAME_WIDTH) > 720:
         frameScale = webcam.get(cv2.CAP_PROP_FRAME_WIDTH) / 720
 
     ret, frame = webcam.read()
     preview = np.array(frame[::int(frameScale),::int(frameScale)])
-    #print(type(frame))
     cv2.imshow("webcam_raw",preview)
     cv2.setMouseCallback("webcam_raw",mouse_paint_callback,preview)
+
     while True:
         if cv2.waitKey(1) == 13:
             #cv2.destroyWindow("webcam_raw")
             break
 
     roi = np.array(box) * int(frameScale)
-    outputFile = open(outputFileName,'w')
-    outputFile.write("frame,time,left,right\n")
-    print(roi)
+    print(roi[:ncage*4])
 
-    '''frame = cv2.line(frame,
-        tuple(roi[-4:-2]),
-        tuple(roi[-2:]),
-        (0x00,0xff,0x00),2)
-    frame = cv2.line(frame,
-        tuple(roi[0:2]),
-        tuple(roi[2:4]),
-        (0xff,0x00,0x00),2)
-    while True:
-        cv2.imshow("demo", frame)
-        if cv2.waitKey(1) == 13:
-            break'''
     pbar = tqdm(total=webcam.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    title = ['p%d'%(i + 1) for i in range(ncage)]
+    result = []
+
     try:
         pos = 1
         while webcam.isOpened():
+            item = [pos,pos/25]
             ret,frame = webcam.read()
-            left = frame[roi[1]-width//2:roi[3]+width//2,roi[0]:roi[2],2].mean()
-            right = frame[roi[5]-width//2:roi[7]+width//2,roi[4]:roi[6],2].mean()
-            #cv2.imshow("demo",left)
+            for index in range(ncage):
+                item.append(float(frame[roi[1+index*4]-width//2:roi[3+index*4]+width//2,roi[0+index*4]:roi[2+index*4],2].mean()))
+            result.append(tuple(item))
             pos += 1
-            outputFile.write("%d,%.2f,%.2f,%.2f\n"%(pos,pos/25,left,right))
             pbar.update(1)
     except KeyboardInterrupt:
         pass
     except TypeError:
         #final frame
         pass
+
     pbar.close()
-    outputFile.close()
     webcam.release()
+    createNewPoseTable(dbCursor, session_name, title, result) #TODO
+    return True
 
 if __name__ == '__main__':
     import sys

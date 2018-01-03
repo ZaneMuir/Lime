@@ -1,6 +1,7 @@
-from .power_protocol import main as sensorMain
 from .special_items import checkFile
-from .poseAnalysis import poseCheck_line as poseCheck
+from .poseAnalysis import poseCheck_DB as poseCheck
 from .video import main as videoMain
-from .videoOverSensor import main as finalMain
-from .climbInfo import main as climbInfo
+from .videoOverSensor import mainDB as finalMain
+
+from .database import *
+from .sensor import sensorDB

@@ -7,13 +7,52 @@ def group_consecutive(a,step=1):
         modified from https://zhuanlan.zhihu.com/p/29558169'''
     return np.split(a, np.where(np.diff(a) > step)[0] + 1)
 
-def expandFrame(Frame):
-    result = np.zeros(60*60*25)
+def expandFrame(Frame, duration):
+    result = np.zeros(duration*60*25)
     for index in range(len(Frame)):
         start = int(Frame.iloc[index]['start'])
         end = int(Frame.iloc[index]['end'])
         result[start:end] = 1
     return result
+
+def mainDB(sessionID, dbCursor, duration, output):
+    result = []
+    for each in sessionID:
+
+        dbCursor.execute("SELECT * FROM %s"%each+'_Climb')
+        climb = pd.DataFrame(dbCursor.fetchall(),columns=['n','start','end'])
+        dbCursor.execute("SELECT * FROM %s"%each+'_Bout')
+        bout = pd.DataFrame(dbCursor.fetchall(),columns=['n','start','end'])
+
+        climbarray = expandFrame(climb[['start','end']]*25//1,duration)
+        boutarray = expandFrame(bout[['start','end']]*25//1, duration)
+
+        plt.figure(figsize=(50,2),dpi=300)
+        plt.plot(np.linspace(0,duration*60,duration*60*25),boutarray)
+        plt.plot(np.linspace(0,duration*60,duration*60*25),climbarray+0.25)
+
+        for index in range(len(bout)):
+            start = int(bout.iloc[index]['start'] * 25 // 1)
+            end = int(bout.iloc[index]['end'] * 25 // 1)
+
+            if 1 in climbarray[start:end]:
+                boutarray[start:end] = 0
+
+        plt.plot(np.linspace(0,duration*60,duration*60*25),boutarray+0.5)
+        plt.xlim((0,3600))
+        plt.savefig(os.path.join(output,each+'.png'), bbox_inches='tight')
+
+        b_duration = boutarray.sum() / 25
+        b_count = np.where(np.diff(boutarray) == -1)[0].shape[0]
+
+        c_duration = climbarray.sum() /25
+        c_count = np.where(np.diff(climbarray) == -1)[0].shape[0]
+
+
+        result.append((b_count, b_duration, c_count, c_duration))
+    return result
+
+
 
 def main(ChewFilePath, EyeFilePath, outputName=None ,arguments=None):
     duration = count = 0
