@@ -15,7 +15,7 @@ def group_consecutive(a,step=1):
 def sensorDB(sensor_file, time_range, sessionID, episode_gap, dbCursor):
 
     entryResult = []
-    for index, (ch_num, time_array, raw_array, power_array, _ ) in enumerate(process_powered_sheet(sensor_file, time_range)):
+    for index, (ch_num, time_array, raw_array, power_array, _ ) in enumerate(process_powered_sheet(sensor_file, time_range, len(sessionID))):
 
         loc, scale = stats.norm.fit(np.log10(power_array))
         thresh = 10**(loc+scale) if power_array.max() > 0.0005 else 0.0005
