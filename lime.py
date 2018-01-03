@@ -167,6 +167,7 @@ for index, each in enumerate(sessionID):
     Weight          REAL
 );'''
 
+print(session_summary_info)
 LimeOne.createNewSessionSummaryEntry(dbCursor, sessionID, session_summary_info)
 # close database
 conn.commit()

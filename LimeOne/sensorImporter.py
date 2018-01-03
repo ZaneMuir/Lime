@@ -8,7 +8,7 @@ import os,re
 #20170906_001,20170907_ :   [[0,'1 CH_0  ','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']]
 #FUTURE:                    [[0,'1 CH_0','701 CH_0_P'],[1,'2 CH_1','702 CH_1_P']]
 
-powered_sheet_title = lambda n: [[i, '1 CH_%d'%i, '7%02d CH_%d_P'%(i+1,i)] for i in range(n)]
+powered_sheet_title = lambda n: [[i, '%d CH_%d'%(i+1,i), '7%02d CH_%d_P'%(i+1,i)] for i in range(n)]
 
 def processTimeRange(timeRange):
     return list(map(lambda x:int(x), re.split(r'_',timeRange)))

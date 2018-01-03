@@ -75,7 +75,9 @@ def createNewSessionSummaryEntry(cursor, sessionID, session_summary_info):
             cursor.execute("SELECT * FROM summary WHERE SessionID = %s"%each)
             cursor.fetchall()
             cursor.execute("DELETE FROM summary WHERE SessionID = %s"%each)
+            print("delete former entry")
         except sqlite3.OperationalError:
+            print("create new entry")
             pass
 
         command = """INSERT INTO summary VALUES ("%s",%d,"%s","%s","%s",%d,"%s","%s",%f,"%s",%d,%f,%d,%f,%f,%f,%f,%f)"""%(tuple(session_summary_info[index]))
