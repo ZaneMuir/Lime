@@ -1,3 +1,5 @@
+'''video.py
+主要包含视频处理的主要函数'''
 import cv2
 import numpy as np
 from tqdm import tqdm
