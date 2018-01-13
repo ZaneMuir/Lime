@@ -32,6 +32,11 @@ Usage:
 -u SETUP --setup=SETUP                      # setup prefix, one of "TtC_NN","TtC_NH", "TtC_HH", "TtV_NN","TtV_NH", "TtV_HH" [default: TtV_NN]
 -v OFFSET --videoOffset=OFFSET              # video offset, aligning with sensor time, counts as second [default: 0.0]
 -w WIDTH --width=WIDTH                      # target area width, unit as px [default: 20]
+
+typical command for 4-mice setup:
+```lime.py -d 20171213 -t 1430 -u TtC_NH -n 4 -m C1M1/C2M1/C1M2/C2M2 -v 17 -f 3.653_3.142/3.653_3.142/3.653_3.142/3.653_3.142 20171213001_PW.txt 20171213001.mov```
+
+tips: easier for editing to write these commands into an sh file.
 """.format(version=__version__)
 
 from docopt import docopt
@@ -64,11 +69,13 @@ arguments = docopt(__doc__, version='Lime %s'%__version__) # 使用docopt模块�
 if arguments['--debug']:
     print(arguments)
 
+if not os.path.isdir(arguments['--output']):
+    os.mkdir(arguments['--output'])
 
 # 检验数据库是否存在，如果不，则新建一个
 if not os.path.exists(os.path.join(arguments['--input'], arguments['--database'])):
     LimeOne.createNewDatabase(os.path.join(arguments['--input'], arguments['--database']))
-exit(0)
+
 # 与数据库链接，并获取cursor。cursor作为之后几乎所有的数据库操作的门户。
 conn = sqlite3.connect(os.path.join(arguments['--input'], arguments['--database']))
 dbCursor = conn.cursor()
@@ -137,6 +144,7 @@ conn.commit()
 
 # 生成summary表格中的条目信息，详见'LimeOne/database.py'
 session_summary_info = []
+Foods = [[ float(subitem) for subitem in re.split('_',item)] for item in re.split('/',arguments['--food'])]
 for index, each in enumerate(sessionID):
     item = [each] # session ID
     item.append(arguments['--setup'])
@@ -153,10 +161,10 @@ for index, each in enumerate(sessionID):
     item.append(result[index][1])
     item.append(result[index][2])
     item.append(result[index][3])
-    FoodBefore, FoodAfter = re.split("_",arguments['--food'])
-    item.append(float(FoodBefore))
-    item.append(float(FoodAfter))
-    item.append(float(FoodBefore)-float(FoodAfter))
+    FoodBeforem, FoodAfter = Foods[index]
+    item.append(FoodBefore)
+    item.append(FoodAfter)
+    item.append(FoodBefore-FoodAfter)
     item.append(-1)
     item.append(float(arguments['--videoOffset']))
     session_summary_info.append(item)

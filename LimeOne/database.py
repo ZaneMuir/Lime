@@ -40,6 +40,15 @@ def createNewDatabase(database_name):
             setoff          REAL
         );
     """)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS weight (
+            Cage        INT,
+            CageName    TEXT,
+            Mouse       TEXT,
+            SessionDate INT,
+            Weight      REAL,
+            Food        REAL
+        )""")
     conn.commit()
     conn.close()
     print("INFO: create new database file: %s"%database_name)
@@ -111,3 +120,6 @@ def createNewSessionSummaryEntry(cursor, sessionID, session_summary_info):
         command = """INSERT INTO summary VALUES ("%s","%s",%d,"%s","%s","%s",%d,%d,"%s",%f,"%s",%d,%.3f,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.1f)"""%(tuple(session_summary_info[index]))
         cursor.execute(command)
     return True
+
+if __name__ == '__main__':
+    createNewDatabase('chewing.db')
