@@ -27,7 +27,7 @@ def sensorDB(sensor_file, time_range, sessionID, episode_gap, dbCursor):
     entryResult = []
     # 读取spike2导出的txt文件，详见'LimeOne/sensorImporter.py'
     for index, (ch_num, time_array, raw_array, power_array, _ ) in enumerate(process_powered_sheet(sensor_file, time_range, len(sessionID))):
-        # print(ch_num, power_array)
+        #print(ch_num, power_array)
         loc, scale = stats.norm.fit(np.log10(power_array)) # 对数据log后，做正态分布拟合[利用scipy.stats模块]
         thresh = 10**(loc+scale) if power_array.max() > 0.0005 else 0.0005 # 若最大值小于0.0005，则默认为没有啃食行为
         #TODO:distribution plot?

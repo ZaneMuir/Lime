@@ -4,7 +4,7 @@ import LimeOne # 模块主要包含 当前采用的处理函数，详见'LimeOne
 import os, re
 import sqlite3 # 数据将存储在sql数据库中。常见的sql操作，可以参考网站:https://www.tutorialspoint.com/sqlite/index.htm
 
-__version__ = "1.2.0"
+__version__ = "1.2.0-dev"
 
 # __doc__ 作为说明文档的同时，也作为docopt模块的参数，可以更直观方便的提取命令行里的参数。
 __doc__ = """
@@ -14,24 +14,24 @@ analysis program for chewing behavior of Zhang's Lab.
 Usage:
     lime.py [options] SENSORFILE [VIDEOFILE]
 
-
--b DATABASENAME --database=DATABASENAME     # database file path [default: chewing.db]
--c GAP --climbEpisode=GAP                   # climbing episode gap length, unit as second [default: 0]
---debug                                     # debug mode
--d DATE --date=DATE                         # session date [default: YYYYMMDD]
--e GAP --episode=GAP                        # episode gap length, unit as second [default: 4]
--f FOOD --food=FOOD                         # food weight data, unit as gram [default: 2.000_1.000]
--i INDIR --input=INDIR                      # data directory [default: data]
--l LENGTH --length=LENGTH                   # session length, unit as minute [default: 60]
--m MICESEQ --miceSequence=MICESEQ           # mice sequence, from left to right [default: C1M1/C1M2/C1M3/C1M4]
--n NCAGE --cageSum=NCAGE                    # total mice number in this session [default: 2]
--o OUTDIR --output=OUTDIR                   # chart directory [default: chart]
--p POSEANA --poseAnalysis=POSEANA           # need pose analysis only? [default: True]
--r RANGE --timeRange=RANGE                  # checking range, unit as second [default: 60_3600]
--t TIME --startTime=TIME                    # start time point [default: HHMM]
--u SETUP --setup=SETUP                      # setup prefix, one of "TtC_NN","TtC_NH", "TtC_HH", "TtV_NN","TtV_NH", "TtV_HH" [default: TtV_NN]
--v OFFSET --videoOffset=OFFSET              # video offset, aligning with sensor time, counts as second [default: 0.0]
--w WIDTH --width=WIDTH                      # target area width, unit as px [default: 20]
+Options:
+    -b DATABASENAME --database=DATABASENAME     # database file path [default: chewing.db]
+    -c GAP --climbEpisode=GAP                   # climbing episode gap length, unit as second [default: 0]
+    --debug                                     # debug mode
+    -d DATE --date=DATE                         # session date [default: YYYYMMDD]
+    -e GAP --episode=GAP                        # episode gap length, unit as second [default: 4]
+    -f FOOD --food=FOOD                         # food weight data, unit as gram [default: 2.000_1.000]
+    -i INDIR --input=INDIR                      # data directory [default: data]
+    -l LENGTH --length=LENGTH                   # session length, unit as minute [default: 60]
+    -m MICESEQ --miceSequence=MICESEQ           # mice sequence, from left to right [default: C1M1/C1M2/C1M3/C1M4]
+    -n NCAGE --cageSum=NCAGE                    # total mice number in this session [default: 2]
+    -o OUTDIR --output=OUTDIR                   # chart directory [default: chart]
+    -p POSEANA --poseAnalysis=POSEANA           # need pose analysis only? [default: True]
+    -r RANGE --timeRange=RANGE                  # checking range, unit as second [default: 60_3600]
+    -t TIME --startTime=TIME                    # start time point [default: HHMM]
+    -u SETUP --setup=SETUP                      # setup prefix, one of "TtC_NN","TtC_NH", "TtC_HH", "TtV_NN","TtV_NH", "TtV_HH" [default: TtV_NN]
+    -v OFFSET --videoOffset=OFFSET              # video offset, aligning with sensor time, counts as second [default: 0.0]
+    -w WIDTH --width=WIDTH                      # target area width, unit as px [default: 20]
 
 typical command for 4-mice setup:
 ```lime.py -d 20171213 -t 1430 -u TtC_NH -n 4 -m C1M1/C2M1/C1M2/C2M2 -v 17 -f 3.653_3.142/3.653_3.142/3.653_3.142/3.653_3.142 20171213001_PW.txt 20171213001.mov```
@@ -68,6 +68,8 @@ arguments = docopt(__doc__, version='Lime %s'%__version__) # 使用docopt模块�
 # debug模式输出所得到的参数值
 if arguments['--debug']:
     print(arguments)
+    exit(0)
+
 
 if not os.path.isdir(arguments['--output']):
     os.mkdir(arguments['--output'])
@@ -85,8 +87,10 @@ dbCursor = conn.cursor()
 
 sessionName = re.findall(r"(\d{11})_PW\.txt",arguments['SENSORFILE'])[0] # 基于传感器文件名获取本session的名字：即{DATE}{ID},如20171213001
 mice = re.split("/",arguments['--miceSequence']) # 获取每只老鼠的名称
+setups = re.split("/",arguments['--setup'])
+setups_index = lambda x:int(x / 2)
 # 生成每只老鼠的sessionID，如'TtC_NN_C1M1_L_20171213_1330_60'
-sessionID = [   arguments['--setup'] + \
+sessionID = [   setups[setups_index(i)] + \
                 '_' + mice[i] + ('_L_' if i%2 == 0 else '_R_') + \
                 arguments['--date'] + '_'+arguments['--startTime'] + \
                 '_' + arguments['--length']\
@@ -147,7 +151,7 @@ session_summary_info = []
 Foods = [[ float(subitem) for subitem in re.split('_',item)] for item in re.split('/',arguments['--food'])]
 for index, each in enumerate(sessionID):
     item = [each] # session ID
-    item.append(arguments['--setup'])
+    item.append(setups[setups_index(index)])
     item.append(int(re.findall(r'C(\d+)M\d+',mice[index])[0])) # cage number
     item.append(mice[index]) # mouse
     item.append(mice[oppositeMouseIndex(index)]) #OppositeMouse
@@ -161,7 +165,7 @@ for index, each in enumerate(sessionID):
     item.append(result[index][1])
     item.append(result[index][2])
     item.append(result[index][3])
-    FoodBeforem, FoodAfter = Foods[index]
+    FoodBefore, FoodAfter = Foods[index]
     item.append(FoodBefore)
     item.append(FoodAfter)
     item.append(FoodBefore-FoodAfter)

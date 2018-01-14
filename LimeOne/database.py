@@ -89,13 +89,13 @@ def createNewSessionTable(cursor, session_name, title, session_info):
     表格主要用来保存攀爬与啃食的起始与终止时刻信息，session_info中的每个元素应包含:(id::int, start::real, end::real)'''
     try:
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS %s (
+            CREATE TABLE %s (
             No    Int PRIMARY KEY %s);
         """%(session_name, ''.join([ ',\n%s      REAL'%n for n in title])))
     except sqlite3.OperationalError:
         cursor.execute("DROP TABLE %s;"%session_name)
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS %s (
+            CREATE TABLE %s (
             No    Int PRIMARY KEY %s);
         """%(session_name, ''.join([ ',\n%s      REAL'%n for n in title])))
 

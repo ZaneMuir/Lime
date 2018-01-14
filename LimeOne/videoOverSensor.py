@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+from .database import createNewSessionTable
 def group_consecutive(a,step=1):
     ''' group consecutive numbers in an array
         modified from https://zhuanlan.zhihu.com/p/29558169'''
@@ -17,8 +18,9 @@ def expandFrame(Frame, duration):
 
 def mainDB(sessionID, dbCursor, duration, output):
     result = []
-    for each in sessionID:
 
+    for each in sessionID:
+        chewing_result = []
         dbCursor.execute("SELECT * FROM %s"%each+'_Climb')
         climb = pd.DataFrame(dbCursor.fetchall(),columns=['n','start','end'])
         dbCursor.execute("SELECT * FROM %s"%each+'_Bout')
@@ -48,6 +50,11 @@ def mainDB(sessionID, dbCursor, duration, output):
         c_duration = climbarray.sum() /25
         c_count = np.where(np.diff(climbarray) == -1)[0].shape[0]
 
+        title = ['start','end']
+        times = np.linspace(0,3600,boutarray.shape[0])
+        temp = pd.DataFrame(np.hstack((times[:,np.newaxis], boutarray[:,np.newaxis])), columns=['time','bout'])
+        chewing_result = [(index, item[0],item[-1]) for index, item in enumerate(group_consecutive(temp[temp.bout == 1]['time'].values))]
+        createNewSessionTable(dbCursor, each+'_Chew', title, chewing_result)
 
         result.append((b_count, b_duration, c_count, c_duration))
     return result
