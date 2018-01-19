@@ -43,6 +43,7 @@ def main(camName, dbCursor, session_name, ncage=2, width=20):
     if webcam.get(cv2.CAP_PROP_FRAME_WIDTH) > 720:
         frameScale = webcam.get(cv2.CAP_PROP_FRAME_WIDTH) / 720
 
+    webcam.set(cv2.CAP_PROP_POS_FRAMES,60*25)
     ret, frame = webcam.read()
     preview = np.array(frame[::int(frameScale),::int(frameScale)])
     cv2.imshow("webcam_raw",preview)
@@ -61,6 +62,7 @@ def main(camName, dbCursor, session_name, ncage=2, width=20):
     title = ['p%d'%(i + 1) for i in range(ncage)]
     result = []
 
+    webcam.set(cv2.CAP_PROP_POS_FRAMES, 0)
     try:
         pos = 1
         while webcam.isOpened():
