@@ -3,6 +3,12 @@ analysis program for chewing behavior of Zhang's Lab.
 
 ## Usage 使用方法
 
+直接调整```lime.sh```中的各项参数，后运行该脚本，```bash lime.sh```即可。
+
+对于小鼠体重，也可用同样地方法修改```limeWeight.sh```并运行。
+
+---
+
 使用方法与相关可调参数如下。运行后会首先弹出第一帧，拖拽可画水平线作为截取的区域，高度默认为2px。先选取左侧(0)，再选取右侧(1)；完成后键入回车。程序运行完后(ca. 6min.), 会输出综合的chew count与chew duration值。
 
 数据文件(\*\_PW.txt, \*.mov)默认放于data文件夹(或者自行修改```--input```参数)中。最终数据输出于chart文件夹中(或者自行修改```--output```参数)；另外，chew count与chew duration值仅输出在终端，请注意保存。

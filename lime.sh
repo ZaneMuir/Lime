@@ -23,7 +23,7 @@ FoodSeq=3.653_3.142/3.653_3.142/3.653_3.142/3.653_3.142
 #视频延迟时间
 VideoOffset=17
 
-
+#========== 以下的选项仅在必需要时修改 ==========
 
 #数据文件储存的目录
 DataDirPath=data
@@ -37,8 +37,7 @@ VideoFile=$SessionDate$SessionId.mov
 #using Julia
 #julia LimeJulia/Lime.jl \
 #using python3
-python3 lime.py \
---debug -i $DataDirPath -o $ChartDirPath -d $SessionDate -t $SessionTime -u $Setup -n $nCage -m $MiceSequence -f $FoodSeq -v $VideoOffset $SensorFile $VideoFile
+python3 lime.py -i $DataDirPath -o $ChartDirPath -d $SessionDate -t $SessionTime -u $Setup -n $nCage -m $MiceSequence -f $FoodSeq -v $VideoOffset $SensorFile $VideoFile
 
 # Other Options:
 #
