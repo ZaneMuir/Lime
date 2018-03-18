@@ -37,7 +37,8 @@ def createNewDatabase(database_name):
             FoodAfter       REAL,
             Food            REAL,
             Weight          REAL,
-            setoff          REAL
+            setoff          REAL,
+            VideoName       TEXT
         );
     """)
     c.execute("""
@@ -117,7 +118,7 @@ def createNewSessionSummaryEntry(cursor, sessionID, session_summary_info):
             print("create new entry: ", each)
             pass
 
-        command = """INSERT INTO summary VALUES ("%s","%s",%d,"%s","%s","%s",%d,%d,"%s",%f,"%s",%d,%.3f,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.1f)"""%(tuple(session_summary_info[index]))
+        command = """INSERT INTO summary VALUES ("%s","%s",%d,"%s","%s","%s",%d,%d,"%s",%f,"%s",%d,%.3f,%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.1f,"%s")"""%(tuple(session_summary_info[index]))
         cursor.execute(command)
     return True
 

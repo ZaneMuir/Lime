@@ -28,10 +28,12 @@ Options:
     -o OUTDIR --output=OUTDIR                   # chart directory [default: chart]
     -p POSEANA --poseAnalysis=POSEANA           # need pose analysis only? [default: True]
     -r RANGE --timeRange=RANGE                  # checking range, unit as second [default: 60_3600]
+    -s THRESHSCALE --scale=THRESHSCALE          # mean - scale*std [default: 1]
     -t TIME --startTime=TIME                    # start time point [default: HHMM]
     -u SETUP --setup=SETUP                      # setup prefix, one of "TtC_NN","TtC_NH", "TtC_HH", "TtV_NN","TtV_NH", "TtV_HH" [default: TtV_NN]
     -v OFFSET --videoOffset=OFFSET              # video offset, aligning with sensor time, counts as second [default: 0.0]
     -w WIDTH --width=WIDTH                      # target area width, unit as px [default: 20]
+    -z VIDEONAME --videoName=VIDEONAME          # video name [default: NaN/NaN/NaN/NaN]
 
 typical command for 4-mice setup:
 ```lime.py -d 20171213 -t 1430 -u TtC_NH -n 4 -m C1M1/C2M1/C1M2/C2M2 -v 17 -f 3.653_3.142/3.653_3.142/3.653_3.142/3.653_3.142 20171213001_PW.txt 20171213001.mov```
@@ -61,6 +63,7 @@ arguments = docopt(__doc__, version='Lime %s'%__version__) # 使用docopt模块�
  '--timeRange': '60_3600',
  '--videoOffset': '17',
  '--width': '20',
+ 'videoName': 'Nan',
  'SENSORFILE': '20171213001_PW.txt',
  'VIDEOFILE': '20171213001.mov'}
  '''
@@ -120,7 +123,8 @@ if arguments['--poseAnalysis'] == 'True':
                         sessionID,
                         offset=float(arguments['--videoOffset']),   # 视频中“开始”的时刻
                         output=arguments['--output'],               # 图像输出的目录
-                        ncage=int(arguments['--cageSum']))          # 该session中的笼数
+                        ncage=int(arguments['--cageSum']),          # 该session中的笼数
+                        scale=float(arguments['--scale']))
     conn.commit()
 else:
     print('step 2/4: pose analysis, SKIP')
@@ -147,6 +151,7 @@ result = LimeOne.finalMain(  sessionID,
 conn.commit()
 
 # 生成summary表格中的条目信息，详见'LimeOne/database.py'
+video_name_list = re.split("/",arguments['--videoName'])
 session_summary_info = []
 Foods = [[ float(subitem) for subitem in re.split('_',item)] for item in re.split('/',arguments['--food'])]
 for index, each in enumerate(sessionID):
@@ -171,6 +176,7 @@ for index, each in enumerate(sessionID):
     item.append(FoodBefore-FoodAfter)
     item.append(-1)
     item.append(float(arguments['--videoOffset']))
+    item.append(video_name_list[index])
     session_summary_info.append(item)
 
 # print(session_summary_info)
