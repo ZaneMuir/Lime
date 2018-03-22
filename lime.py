@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
-import LimeOne # 模块主要包含 当前采用的处理函数，详见'LimeOne/__init__.py'。
-import os, re
-import sqlite3 # 数据将存储在sql数据库中。常见的sql操作，可以参考网站:https://www.tutorialspoint.com/sqlite/index.htm
+import LimeOne  # 模块主要包含 当前采用的处理函数，详见'LimeOne/__init__.py'。
+import os
+import re
+import sqlite3
+# 数据将存储在sql数据库中。常见的sql操作，
+# 可以参考网站:https://www.tutorialspoint.com/sqlite/index.htm
 
 __version__ = "1.2.0-dev"
 
@@ -42,7 +45,8 @@ tips: easier for editing to write these commands into an sh file.
 """.format(version=__version__)
 
 from docopt import docopt
-arguments = docopt(__doc__, version='Lime %s'%__version__) # 使用docopt模块约定并提取命令行参数。
+arguments = docopt(__doc__, version='Lime %s' % __version__)
+# 使用docopt模块约定并提取命令行参数。
 
 # 以下为docopt返回的参数信息示例，格式为dict，值得注意的是：key和value均为字符串
 '''
@@ -102,15 +106,17 @@ oppositeMouseIndex = lambda x:x+(-1)**x # 对面小鼠index的生成函数
 
 # 如果输入了视频文件，则分析视频。
 if arguments['VIDEOFILE']:
-    #videoAnalysis
+    #　videoAnalysis
     print("step 1/4: video analysis")
     # 视频分析的主要方法，详见'LimeOne/video.py'
-    LimeOne.videoMain(  os.path.join(arguments['--input'], arguments['VIDEOFILE']), # 视频文件的绝对路径
-                        dbCursor,                                                   # sql cursor
-                        "POSE_"+sessionName,                                        # sql 表格的名称，POSE_{SESSIONNAME}
-                        ncage=int(arguments['--cageSum']),                          # 该session中的笼数
-                        width=int(arguments['--width']))                            # 采样宽度，默认值为20个像素，上下各10个
-    conn.commit() # 提交数据库的更新
+    LimeOne.videoMain(os.path.join(arguments['--input'],
+                                   arguments['VIDEOFILE']),  # 视频文件的绝对路径
+                      dbCursor,                           # sql cursor
+                      "POSE_"+sessionName,  # sql 表格的名称，POSE_{SESSIONNAME}
+                      ncage=int(arguments['--cageSum']),  # 该session中的笼数
+                      width=int(arguments['--width']))  # 采样宽度，默认值为20个像素，上下各10个
+
+    conn.commit() 　# 提交数据库的更新
 else:
     print("step 1/4: video analysis, SKIP")
 
@@ -118,50 +124,48 @@ else:
 if arguments['--poseAnalysis'] == 'True':
     print("step 2/4: pose analysis")
     # 视频数据的分析，详见'LimeOne/poseAnalysis.py'
-    LimeOne.poseCheck(  dbCursor,
-                        sessionName,
-                        sessionID,
-                        offset=float(arguments['--videoOffset']),   # 视频中“开始”的时刻
-                        output=arguments['--output'],               # 图像输出的目录
-                        ncage=int(arguments['--cageSum']),          # 该session中的笼数
-                        scale=float(arguments['--scale']))
+    LimeOne.poseCheck(dbCursor,
+                      sessionName,
+                      sessionID,
+                      offset=float(arguments['--videoOffset']),  # 视频中“开始”的时刻
+                      output=arguments['--output'],              # 图像输出的目录
+                      ncage=int(arguments['--cageSum']),         # 该session中的笼数
+                      scale=float(arguments['--scale']))
     conn.commit()
 else:
     print('step 2/4: pose analysis, SKIP')
 
 # 传感器数据处理，详见'LimeOne/sensor.py'
 print('step 3/4: sensor analysis')
-LimeOne.sensorDB(   os.path.join(arguments['--input'],arguments['SENSORFILE']),
-                    arguments['--timeRange'],
-                    sessionID,
-                    float(arguments['--episode']),
-                    dbCursor
-                    )
+LimeOne.sensorDB(os.path.join(arguments['--input'], arguments['SENSORFILE']),
+                 arguments['--timeRange'],
+                 sessionID,
+                 float(arguments['--episode']),
+                 dbCursor)
 conn.commit()
 
-
-
-#TODO result demonstration and summary entry creation
+# TODO result demonstration and summary entry creation
 print('step 4/4: final analysis')
 # 整合传感器与视频的信息，详见'LimeOne/videoOverSensor.py'
-result = LimeOne.finalMain(  sessionID,
-                             dbCursor,
-                             duration = int(arguments['--length']),
-                             output=arguments['--output'])
+result = LimeOne.finalMain(sessionID,
+                           dbCursor,
+                           duration=int(arguments['--length']),
+                           output=arguments['--output'])
 conn.commit()
 
 # 生成summary表格中的条目信息，详见'LimeOne/database.py'
-video_name_list = re.split("/",arguments['--videoName'])
+video_name_list = re.split("/", arguments['--videoName'])
 session_summary_info = []
-Foods = [[ float(subitem) for subitem in re.split('_',item)] for item in re.split('/',arguments['--food'])]
+Foods = [[float(subitem) for subitem in re.split('_', item)] for item in
+         re.split('/', arguments['--food'])]
 for index, each in enumerate(sessionID):
-    item = [each] # session ID
+    item = [each]  # session ID
     item.append(setups[setups_index(index)])
-    item.append(int(re.findall(r'C(\d+)M\d+',mice[index])[0])) # cage number
-    item.append(mice[index]) # mouse
-    item.append(mice[oppositeMouseIndex(index)]) #OppositeMouse
-    item.append(('L' if index%2 == 0 else 'R')) #Position
-    item.append(index+1) # position NUM
+    item.append(int(re.findall(r'C(\d+)M\d+', mice[index])[0]))  # cage number
+    item.append(mice[index])  # mouse
+    item.append(mice[oppositeMouseIndex(index)])  # OppositeMouse
+    item.append(('L' if index % 2 == 0 else 'R'))  # Position
+    item.append(index+1)  # position NUM
     item.append(int(arguments['--date']))
     item.append(arguments['--startTime'])
     item.append(int(arguments['--length']))

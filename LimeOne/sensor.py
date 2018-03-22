@@ -1,4 +1,6 @@
-'''sensor.py
+u"""
+sensor.
+
 主要用于分析传感器的数据
 
 具体思路：
@@ -6,17 +8,19 @@
 选取位于阈值之上的数据，
 并获取开始与结束的时间；
 但该时间并非真实啃食的时间。
-'''
+"""
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
-import matplotlib.pyplot as plt
-import os, re
-from tqdm import tqdm
-
+# import matplotlib.pyplot as plt
+# import os
+# import re
+# from tqdm import tqdm
 from .sensorImporter import process_powered_sheet
 from .database import createNewSessionTable
-def group_consecutive(a,step=1):
+
+
+def group_consecutive(a, step=1):
     ''' group consecutive numbers in an array
         modified from https://zhuanlan.zhihu.com/p/29558169'''
     return np.split(a, np.where(np.diff(a) > step)[0] + 1)
